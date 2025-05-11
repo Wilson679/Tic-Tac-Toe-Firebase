@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  web:
+    build: ./docker
+    ports:
+      - "8080:80"
+    environment:
+      - FIREBASE_API_KEY=${FIREBASE_API_KEY}
+      - FIREBASE_DATABASE_URL=${FIREBASE_DATABASE_URL}
+    volumes:
+      - ./public:/usr/share/nginx/html
+
+  # 可选：添加Firebase模拟器
+  firebase-emulator:
+    image: ghcr.io/firebase/firebase-emulators-ui
+    ports:
+      - "4000:4000"  # 模拟器UI
+      - "9000:9000"  # 身份验证
+      - "8085:8085"  # 实时数据库
+    volumes:
+      - ./server/firebase.json:/app/firebase.json

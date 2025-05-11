@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>三模式井字棋</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- 模式选择面板 -->
+  <div class="mode-panel">
+    <button onclick="setMode('local')">👥 本地双人</button>
+    <button onclick="setMode('ai')">🤖 人机对战</button>
+    <button onclick="setMode('online')">🌐 网络对战</button>
+    <select id="difficulty">
+      <option value="easy">萌新难度</option>
+      <option value="medium">高手模式</option>
+      <option value="hard">AI战神</option>
+    </select>
+  </div>
+
+  <!-- 动态棋盘 -->
+  <div class="board" id="board"></div>
+
+  <!-- 游戏状态显示 -->
+  <div class="status-bar">
+    <span id="status">等待游戏开始...</span>
+    <button onclick="resetGame()">🔄 重新开始</button>
+  </div>
+
+  <!-- 网络对战模块 -->
+  <div class="online-controls">
+    <input type="text" id="roomId" placeholder="输入房间号">
+    <button onclick="createRoom()">🏠 创建房间</button>
+    <button onclick="joinRoom()">🚪 加入房间</button>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

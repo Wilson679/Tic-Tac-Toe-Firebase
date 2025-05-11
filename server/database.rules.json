@@ -1,0 +1,17 @@
+{
+  "rules": {
+    "rooms": {
+      "$roomId": {
+        ".read": "auth != null",
+        ".write": "
+          auth != null &&
+          (
+            (!data.exists() && newData.exists()) ||  // 允许创建新房间
+            (newData.child('players').hasChild(auth.uid) &&  // 仅允许房间成员操作
+            newData.child('currentPlayer').val() == auth.uid  // 仅当前玩家可操作
+          )
+        "
+      }
+    }
+  }
+}

@@ -1,0 +1,54 @@
+// 🚀 游戏核心控制器
+class GameMaster {
+  constructor() {
+    this.mode = 'local';  // 当前模式：local/ai/online
+    this.board = Array(9).fill('');
+    this.currentPlayer = 'X';
+    this.aiDifficulty = 'easy';
+    this.roomId = null;
+    
+    // 🔥 Firebase初始化
+    this.firebaseConfig = {
+      apiKey: process.env.FIREBASE_KEY,
+      databaseURL: process.env.FIREBASE_DB_URL,
+      projectId: process.env.FIREBASE_PROJECT
+    };
+    this.app = firebase.initializeApp(this.firebaseConfig);
+    this.db = firebase.database();
+    
+    this.initBoard();
+  }
+
+  // 🎮 初始化棋盘
+  initBoard() {
+    const board = document.getElementById('board');
+    board.innerHTML = '';
+    
+    this.board.forEach((_, index) => {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.onclick = () => this.handleMove(index);
+      board.appendChild(cell);
+    });
+  }
+
+  // 🤖 AI决策系统
+  aiMove() {
+    const strategies = {
+      easy: () => this.randomMove(),
+      medium: () => this.defensiveMove(),
+      hard: () => this.minimax(this.board, 'O').index
+    };
+    
+    const move = strategies[this.aiDifficulty]();
+    setTimeout(() => this.makeMove(move), 500);  // 模拟思考延迟
+  }
+
+  // ⚔️ 极小化极大算法
+  minimax(board, player) {
+    // ...算法实现（同前文）...
+  }
+}
+
+// 🚦 启动游戏
+const game = new GameMaster();
