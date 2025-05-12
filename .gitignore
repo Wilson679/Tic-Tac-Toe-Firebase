@@ -1,2 +1,5 @@
 .env
-.env.local
+.env.localfirebase-debug.log
+firebase-debug.log
+firebase-debug.log
+firebase-debug.log

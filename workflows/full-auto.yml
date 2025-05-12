@@ -1,0 +1,70 @@
+name: Full Auto Deploy
+
+on:
+  push:
+    branches: [ main, develop ]  # 自动触发的分支
+  pull_request:
+    types: [closed]             # PR合并后触发
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+    environment: 
+      name: ${{ github.ref_name == 'main' && 'prod' || 'staging' }}  # 多环境管理
+      url: ${{ steps.deploy.outputs.hosting_url }}
+
+    steps:
+      # 1. 代码检出
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. 安装 Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # 3. 安装依赖
+      - name: Install dependencies
+        run: npm ci  # 使用精准依赖安装
+
+      # 4. 运行测试
+      - name: Run tests
+        run: npm test
+
+      # 5. 构建项目
+      - name: Build project
+        run: |
+          npm run build
+          echo "BUILD_DATE=$(date +'%Y-%m-%d %H:%M:%S')" >> .env.production  # 注入构建时间
+
+      # 6. Firebase 部署
+      - name: Deploy to Firebase
+        id: deploy
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_TOKEN }}
+          projectId: ${{ secrets.FIREBASE_PROJECT }}
+          channelId: ${{ github.ref_name == 'main' && 'prod' || 'staging' }}  # 使用部署频道
+          target: hosting
+
+      # 7. 性能监控 (可选)
+      - name: Run Lighthouse Audit
+        uses: treosh/lighthouse-ci-action@v3
+        with:
+          urls: ${{ steps.deploy.outputs.hosting_url }}
+          budgetPath: ./lighthouse-budget.json
+
+      # 8. 通知结果
+      - name: Notify Slack
+        if: always()
+        uses: slackapi/slack-github-action@v2
+        with:
+          channel-id: 'deploy-notifications'
+          slack-message: |
+            Deployment ${{ job.status }} for ${{ github.ref }}
+            URL: ${{ steps.deploy.outputs.hosting_url }}
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
