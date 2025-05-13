@@ -1,9 +1,13 @@
 # Tic-Tac-Toe-Firebase 🎮
-
-[![Firebase Hosting](https://img.shields.io/badge/Deployed%20on-Firebase-orange)](https://tic-tac-toe-679.web.app)
-
-在线井字棋游戏，支持以下功能：
-- 本地双人对战
-- AI 三级难度（简单/中等/困难）
-- 实时网络对战
-- Docker 容器化部署
+## 功能特性
+- **本地双人对战**  
+  两名玩家可在同一设备上轮流操作。
+- **AI对战模式**  
+  提供三级难度选择：
+  - **简单**：随机落子
+  - **中等**：基础策略防御
+  - **困难**：使用 Minimax 算法
+- **实时网络对战**  
+  通过 Firebase 实时数据库实现玩家在线匹配与状态同步。
+- **容器化部署**  
+  支持 Docker 一键部署，确保环境一致性。
